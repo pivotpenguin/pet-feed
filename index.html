@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FeedTrack</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <h1>🐢 FeedTrack</h1>
+
+  <h2>動物登録</h2>
+
+  <input id="name" placeholder="名前">
+  
+  <select id="type">
+    <option>カメ</option>
+    <option>フトアゴヒゲトカゲ</option>
+    <option>クレステッドゲッコー</option>
+    <option>ニシアフリカトカゲモドキ</option>
+  </select>
+
+  <button onclick="addAnimal()">登録</button>
+
+  <h2>登録した動物</h2>
+  <ul id="list"></ul>
+
+  <script src="app.js"></script>
+</body>
+</html>
