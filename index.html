@@ -3,29 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FeedTrack</title>
+  <meta name="theme-color" content="#173d35">
+  <title>FeedTrack Reptile Edition</title>
   <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-  <h1>🐢 FeedTrack</h1>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">REPTILE EDITION</p>
+        <h1>🐢 FeedTrack</h1>
+      </div>
+      <button class="reset-button" id="resetToday" type="button">今日をリセット</button>
+    </header>
 
-  <h2>動物登録</h2>
+    <section class="summary" aria-labelledby="feeding-title">
+      <p class="date-label">きょうの日にち</p>
+      <p class="date" id="today"></p>
+      <h2 id="feeding-title">今日の給餌</h2>
+      <p class="count"><span id="fedCount">0</span><span class="count-total"> / 9 完了</span></p>
+      <div class="progress-track" aria-hidden="true"><div class="progress-bar" id="progressBar"></div></div>
+      <p class="summary-message" id="summaryMessage">まだごはんをあげていません</p>
+    </section>
 
-  <input id="name" placeholder="名前">
-  
-  <select id="type">
-    <option>カメ</option>
-    <option>フトアゴヒゲトカゲ</option>
-    <option>クレステッドゲッコー</option>
-    <option>ニシアフリカトカゲモドキ</option>
-  </select>
-
-  <button onclick="addAnimal()">登録</button>
-
-  <h2>登録した動物</h2>
-  <ul id="list"></ul>
-
+    <section class="pets" aria-labelledby="pets-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">TODAY'S PETS</p>
+          <h2 id="pets-title">9ひきの仲間</h2>
+        </div>
+        <span class="hint">← よこにスライド →</span>
+      </div>
+      <div class="pet-list" id="petList"></div>
+    </section>
+  </main>
   <script src="app.js"></script>
 </body>
 </html>
