@@ -26,7 +26,7 @@ function saveFedPets() {
   localStorage.setItem(storageKey, JSON.stringify({ day: dayKey, pets: fedPets }));
 }
 
-function render() {
+fusnction render() {
   const list = document.getElementById("petList");
   list.innerHTML = pets.map((pet, index) => {
     const isFed = fedPets.includes(pet.id);
