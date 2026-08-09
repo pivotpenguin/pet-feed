@@ -1,12 +1,12 @@
 const pets = [
   { id: "kurumi", name: "クルミ", type: "カメ", icon: "🐢" },
-  { id: "beardie-1", name: "フトアゴ①", type: "フトアゴヒゲトカゲ", icon: "🦎" },
-  { id: "beardie-2", name: "フトアゴ②", type: "フトアゴヒゲトカゲ", icon: "🦎" },
-  { id: "beardie-3", name: "フトアゴ③", type: "フトアゴヒゲトカゲ", icon: "🦎" },
-  { id: "crestie-1", name: "クレス①", type: "クレステッドゲッコー", icon: "🦎" },
-  { id: "crestie-2", name: "クレス②", type: "クレステッドゲッコー", icon: "🦎" },
-  { id: "crestie-3", name: "クレス③", type: "クレステッドゲッコー", icon: "🦎" },
-  { id: "crestie-4", name: "クレス④", type: "クレステッドゲッコー", icon: "🦎" },
+  { id: "beardie-1", name: "ビアンカ", type: "フトアゴヒゲトカゲ", icon: "🦎" },
+  { id: "beardie-2", name: "ベルーガ", type: "フトアゴヒゲトカゲ", icon: "🦎" },
+  { id: "beardie-3", name: "アルバス", type: "フトアゴヒゲトカゲ", icon: "🦎" },
+  { id: "crestie-1", name: "ジャガ", type: "クレステッドゲッコー", icon: "🦎" },
+  { id: "crestie-2", name: "ダル", type: "クレステッドゲッコー", icon: "🦎" },
+  { id: "crestie-3", name: "アンカー", type: "クレステッドゲッコー", icon: "🦎" },
+  { id: "crestie-4", name: "ピメ", type: "クレステッドゲッコー", icon: "🦎" },
   { id: "african-fat-tail", name: "ニシアフ", type: "ニシアフリカトカゲモドキ", icon: "🦎" }
 ];
 
