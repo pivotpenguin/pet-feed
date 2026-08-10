@@ -50,7 +50,7 @@ h2 { margin-bottom: 0; font-size: 21px; }
 .pet::before { top: -105px; right: -75px; width: 235px; height: 235px; box-shadow: 0 0 0 24px #b4ec700d, 0 0 0 50px #b4ec7008; }
 .pet::after { left: -55px; bottom: -86px; width: 165px; height: 165px; }
 .pet.fed { border-color: #a9dd69; background: linear-gradient(145deg, #235b3c 0%, #103426 70%, #071d18 100%); }
-.pet-card-top, .pet-icon, .pet-info, .feed-button { position: relative; z-index: 1; }
+.pet-card-top, .pet-icon, .pet-info, .pet-actions { position: relative; z-index: 1; }
 .pet-card-top { display: grid; grid-template-columns: 36px 1fr 36px; align-items: center; margin-bottom: 13px; text-align: center; }
 .pet-number { color: #bbd9b9; font-size: 10px; font-weight: 850; letter-spacing: .14em; }
 .pet-round-button { display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid #65927d; border-radius: 11px; color: #d3f7d4; background: #1b533f; font-size: 15px; }
@@ -68,8 +68,12 @@ h2 { margin-bottom: 0; font-size: 21px; }
 .pet-mini-stats small { color: #a8c8ae; font-size: 10px; font-weight: 700; }
 .pet-mini-stats strong { color: #e8f5e8; font-size: 14px; }
 .pet-status { margin: 16px 0 0; color: #e1f0df; font-size: 14px; font-weight: 800; }
-.feed-button { width: 100%; border: 0; border-radius: 15px; padding: 16px 12px; color: #173519; background: linear-gradient(135deg, #cafa73, #a7e45e); box-shadow: 0 8px 20px #7cdd4d42; font-size: 16px; font-weight: 900; cursor: pointer; }
+.pet-actions { display: grid; gap: 9px; }
+.feed-button, .clean-button { width: 100%; border: 0; border-radius: 15px; padding: 14px 12px; font-size: 16px; font-weight: 900; cursor: pointer; }
+.feed-button { color: #173519; background: linear-gradient(135deg, #cafa73, #a7e45e); box-shadow: 0 8px 20px #7cdd4d42; }
 .feed-button.done { color: #efffe9; background: #3c7953; box-shadow: none; }
-.feed-button:focus-visible, .reset-button:focus-visible { outline: 3px solid white; outline-offset: 3px; }
+.clean-button { border: 1px solid #5b8a77; color: #dbf2df; background: #133b30; }
+.clean-button.done { border-color: #8fca66; color: #efffe9; background: #356944; }
+.feed-button:focus-visible, .clean-button:focus-visible, .reset-button:focus-visible { outline: 3px solid white; outline-offset: 3px; }
 @media (min-width: 720px) { .pet-list { margin-left: 0; margin-right: 0; padding-left: 0; padding-right: 0; } .pet { flex-basis: 405px; } }
 @media (max-width: 420px) { .app { padding: 16px 12px 40px; } .summary { padding: 20px; } .count { font-size: 42px; } .pet-list { margin-left: -12px; margin-right: -12px; padding-left: 12px; padding-right: 12px; } .pet { flex-basis: 88vw; min-height: 540px; padding: 16px; } .pet-icon { min-height: 218px; margin-bottom: 20px; } .pet-icon span { font-size: 96px; } }
