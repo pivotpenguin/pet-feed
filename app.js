@@ -11,35 +11,45 @@ const pets = [
 ];
 
 const storageKey = "feedTrackDailyFeed";
+const cleaningStorageKey = "feedTrackDailyCleaning";
 const dayKey = new Date().toLocaleDateString("ja-JP");
 
-function loadFedPets() {
+function loadDailyPetIds(key) {
   try {
-    const saved = JSON.parse(localStorage.getItem(storageKey));
+    const saved = JSON.parse(localStorage.getItem(key));
     return saved?.day === dayKey && Array.isArray(saved.pets) ? saved.pets : [];
   } catch { return []; }
 }
 
-let fedPets = loadFedPets();
+let fedPets = loadDailyPetIds(storageKey);
+let cleanedPets = loadDailyPetIds(cleaningStorageKey);
 
 function saveFedPets() {
   localStorage.setItem(storageKey, JSON.stringify({ day: dayKey, pets: fedPets }));
+}
+
+function saveCleanedPets() {
+  localStorage.setItem(cleaningStorageKey, JSON.stringify({ day: dayKey, pets: cleanedPets }));
 }
 
 function render() {
   const list = document.getElementById("petList");
   list.innerHTML = pets.map((pet, index) => {
     const isFed = fedPets.includes(pet.id);
+    const isCleaned = cleanedPets.includes(pet.id);
     return `<article class="pet ${isFed ? "fed" : ""}" style="--pet-number:${index + 1}">
       <div class="pet-card-top"><span class="pet-round-button" aria-hidden="true">☰</span><span class="pet-number">PET ${String(index + 1).padStart(2, "0")}</span><span class="pet-round-button" aria-hidden="true">♡</span></div>
       <span class="pet-icon" aria-label="${pet.name}の写真スペース"><span>${pet.icon}</span><b>PHOTO</b></span>
       <div class="pet-info">
         <p class="pet-name">${pet.name}</p>
         <p class="pet-type">${pet.type}</p>
-        <div class="pet-mini-stats"><span><small>きょうのごはん</small><strong>${isFed ? "済" : "まだ"}</strong></span><span><small>体重</small><strong>記録なし</strong></span></div>
+        <div class="pet-mini-stats"><span><small>きょうのごはん</small><strong>${isFed ? "済" : "まだ"}</strong></span><span><small>今日のお掃除</small><strong>${isCleaned ? "済み" : "まだ"}</strong></span></div>
         <p class="pet-status">${isFed ? "今日は、ごはんをあげました！" : "今日は、まだごはんをあげていません"}</p>
       </div>
-      <button class="feed-button ${isFed ? "done" : ""}" type="button" data-pet-id="${pet.id}">${isFed ? "✓ ごはん済み" : "＋ ごはんをあげた"}</button>
+      <div class="pet-actions">
+        <button class="feed-button ${isFed ? "done" : ""}" type="button" data-action="feed" data-pet-id="${pet.id}">${isFed ? "✓ ごはん済み" : "＋ ごはんをあげた"}</button>
+        <button class="clean-button ${isCleaned ? "done" : ""}" type="button" data-action="clean" data-pet-id="${pet.id}">${isCleaned ? "✓ お掃除済み" : "＋ お掃除した"}</button>
+      </div>
     </article>`;
   }).join("");
 
@@ -53,8 +63,13 @@ document.getElementById("petList").addEventListener("click", (event) => {
   const button = event.target.closest("[data-pet-id]");
   if (!button) return;
   const id = button.dataset.petId;
-  fedPets = fedPets.includes(id) ? fedPets.filter((petId) => petId !== id) : [...fedPets, id];
-  saveFedPets();
+  if (button.dataset.action === "clean") {
+    cleanedPets = cleanedPets.includes(id) ? cleanedPets.filter((petId) => petId !== id) : [...cleanedPets, id];
+    saveCleanedPets();
+  } else {
+    fedPets = fedPets.includes(id) ? fedPets.filter((petId) => petId !== id) : [...fedPets, id];
+    saveFedPets();
+  }
   render();
 });
 
