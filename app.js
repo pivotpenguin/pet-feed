@@ -1,3 +1,7 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+import { doc, getFirestore, onSnapshot, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
 const pets = [
   { id: "kurumi", name: "クルミ", type: "カメ", icon: "🐢" },
   { id: "beardie-1", name: "ビアンカ", type: "フトアゴヒゲトカゲ", icon: "🦎" },
@@ -10,26 +14,53 @@ const pets = [
   { id: "african-fat-tail", name: "ニシアフ", type: "ニシアフリカトカゲモドキ", icon: "🦎" }
 ];
 
+const firebaseConfig = {
+  apiKey: "AIzaSyCEgYrIJsvOT_O9_jwsFEyDrE3eEm3V0cI",
+  authDomain: "feedtrack-reptile.firebaseapp.com",
+  projectId: "feedtrack-reptile",
+  storageBucket: "feedtrack-reptile.firebasestorage.app",
+  messagingSenderId: "1095574939571",
+  appId: "1:1095574939571:web:ffbf5118859b1d40b38dc6"
+};
+
 const storageKey = "feedTrackDailyFeed";
 const cleaningStorageKey = "feedTrackDailyCleaning";
 const dayKey = new Date().toLocaleDateString("ja-JP");
+const petIds = new Set(pets.map((pet) => pet.id));
 
 function loadDailyPetIds(key) {
   try {
     const saved = JSON.parse(localStorage.getItem(key));
-    return saved?.day === dayKey && Array.isArray(saved.pets) ? saved.pets : [];
-  } catch { return []; }
+    return saved?.day === dayKey && Array.isArray(saved.pets) ? saved.pets.filter((id) => petIds.has(id)) : [];
+  } catch {
+    return [];
+  }
 }
 
 let fedPets = loadDailyPetIds(storageKey);
 let cleanedPets = loadDailyPetIds(cleaningStorageKey);
+let sharedDayRef;
 
-function saveFedPets() {
+function saveLocally() {
   localStorage.setItem(storageKey, JSON.stringify({ day: dayKey, pets: fedPets }));
+  localStorage.setItem(cleaningStorageKey, JSON.stringify({ day: dayKey, pets: cleanedPets }));
 }
 
-function saveCleanedPets() {
-  localStorage.setItem(cleaningStorageKey, JSON.stringify({ day: dayKey, pets: cleanedPets }));
+function saveToCloud() {
+  if (!sharedDayRef) return;
+  setDoc(sharedDayRef, {
+    day: dayKey,
+    fedPets,
+    cleanedPets,
+    updatedAt: serverTimestamp()
+  }).catch(() => {
+    // 電波がないときも、このiPhoneには保存されるよ。
+  });
+}
+
+function saveAll() {
+  saveLocally();
+  saveToCloud();
 }
 
 function render() {
@@ -59,26 +90,62 @@ function render() {
   document.getElementById("summaryMessage").textContent = count === 0 ? "まだごはんをあげていません" : count === pets.length ? "全員分、完了！ すごい！" : `あと ${pets.length - count} ひきです`;
 }
 
+function isPetIdList(value) {
+  return Array.isArray(value) ? value.filter((id) => petIds.has(id)) : [];
+}
+
+async function startFamilySync() {
+  try {
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    await signInAnonymously(auth);
+
+    const database = getFirestore(app);
+    sharedDayRef = doc(database, "families", "feedtrack-home");
+
+    onSnapshot(sharedDayRef, (snapshot) => {
+      const saved = snapshot.data();
+      if (!saved || saved.day !== dayKey) {
+        fedPets = [];
+        cleanedPets = [];
+        saveLocally();
+        saveToCloud();
+        render();
+        return;
+      }
+
+      fedPets = isPetIdList(saved.fedPets);
+      cleanedPets = isPetIdList(saved.cleanedPets);
+      saveLocally();
+      render();
+    });
+  } catch {
+    // 同期できないときも、今までどおりこの端末では使えるよ。
+  }
+}
+
 document.getElementById("petList").addEventListener("click", (event) => {
   const button = event.target.closest("[data-pet-id]");
   if (!button) return;
+
   const id = button.dataset.petId;
   if (button.dataset.action === "clean") {
     cleanedPets = cleanedPets.includes(id) ? cleanedPets.filter((petId) => petId !== id) : [...cleanedPets, id];
-    saveCleanedPets();
   } else {
     fedPets = fedPets.includes(id) ? fedPets.filter((petId) => petId !== id) : [...fedPets, id];
-    saveFedPets();
   }
+  saveAll();
   render();
 });
 
 document.getElementById("resetToday").addEventListener("click", () => {
-  if (!confirm("今日の『ごはん済み』を全部もどしますか？")) return;
+  if (!confirm("今日の『ごはん済み』と『お掃除済み』を全部もどしますか？")) return;
   fedPets = [];
-  saveFedPets();
+  cleanedPets = [];
+  saveAll();
   render();
 });
 
 document.getElementById("today").textContent = new Intl.DateTimeFormat("ja-JP", { year: "numeric", month: "2-digit", day: "2-digit", weekday: "short" }).format(new Date());
 render();
+startFamilySync();
