@@ -25,6 +25,7 @@ const firebaseConfig = {
 
 const storageKey = "feedTrackDailyFeed";
 const cleaningStorageKey = "feedTrackDailyCleaning";
+const poopingStorageKey = "feedTrackDailyPooping";
 const dayKey = new Date().toLocaleDateString("ja-JP");
 const petIds = new Set(pets.map((pet) => pet.id));
 
@@ -39,11 +40,13 @@ function loadDailyPetIds(key) {
 
 let fedPets = loadDailyPetIds(storageKey);
 let cleanedPets = loadDailyPetIds(cleaningStorageKey);
+let poopedPets = loadDailyPetIds(poopingStorageKey);
 let sharedDayRef;
 
 function saveLocally() {
   localStorage.setItem(storageKey, JSON.stringify({ day: dayKey, pets: fedPets }));
   localStorage.setItem(cleaningStorageKey, JSON.stringify({ day: dayKey, pets: cleanedPets }));
+  localStorage.setItem(poopingStorageKey, JSON.stringify({ day: dayKey, pets: poopedPets }));
 }
 
 function saveToCloud() {
@@ -52,6 +55,7 @@ function saveToCloud() {
     day: dayKey,
     fedPets,
     cleanedPets,
+    poopedPets,
     updatedAt: serverTimestamp()
   }).catch(() => {
     // 電波がないときも、このiPhoneには保存されるよ。
@@ -68,18 +72,20 @@ function render() {
   list.innerHTML = pets.map((pet, index) => {
     const isFed = fedPets.includes(pet.id);
     const isCleaned = cleanedPets.includes(pet.id);
+    const hasPooped = poopedPets.includes(pet.id);
     return `<article class="pet ${isFed ? "fed" : ""}" style="--pet-number:${index + 1}">
       <div class="pet-card-top"><span class="pet-round-button" aria-hidden="true">☰</span><span class="pet-number">PET ${String(index + 1).padStart(2, "0")}</span><span class="pet-round-button" aria-hidden="true">♡</span></div>
       <span class="pet-icon" aria-label="${pet.name}の写真スペース"><span>${pet.icon}</span><b>PHOTO</b></span>
       <div class="pet-info">
         <p class="pet-name">${pet.name}</p>
         <p class="pet-type">${pet.type}</p>
-        <div class="pet-mini-stats"><span><small>きょうのごはん</small><strong>${isFed ? "済" : "まだ"}</strong></span><span><small>今日のお掃除</small><strong>${isCleaned ? "済み" : "まだ"}</strong></span></div>
+        <div class="pet-mini-stats"><span><small>きょうのごはん</small><strong>${isFed ? "済" : "まだ"}</strong></span><span><small>今日のお掃除</small><strong>${isCleaned ? "済み" : "まだ"}</strong></span><span><small>今日のフン</small><strong>${hasPooped ? "済み" : "まだ"}</strong></span></div>
         <p class="pet-status">${isFed ? "今日は、ごはんをあげました！" : "今日は、まだごはんをあげていません"}</p>
       </div>
       <div class="pet-actions">
         <button class="feed-button ${isFed ? "done" : ""}" type="button" data-action="feed" data-pet-id="${pet.id}">${isFed ? "✓ ごはん済み" : "＋ ごはんをあげた"}</button>
         <button class="clean-button ${isCleaned ? "done" : ""}" type="button" data-action="clean" data-pet-id="${pet.id}">${isCleaned ? "✓ お掃除済み" : "＋ お掃除した"}</button>
+        <button class="poop-button ${hasPooped ? "done" : ""}" type="button" data-action="poop" data-pet-id="${pet.id}">${hasPooped ? "✓ フン済み" : "＋ フンした"}</button>
       </div>
     </article>`;
   }).join("");
@@ -108,6 +114,7 @@ async function startFamilySync() {
       if (!saved || saved.day !== dayKey) {
         fedPets = [];
         cleanedPets = [];
+        poopedPets = [];
         saveLocally();
         saveToCloud();
         render();
@@ -116,6 +123,7 @@ async function startFamilySync() {
 
       fedPets = isPetIdList(saved.fedPets);
       cleanedPets = isPetIdList(saved.cleanedPets);
+      poopedPets = isPetIdList(saved.poopedPets);
       saveLocally();
       render();
     });
@@ -131,6 +139,8 @@ document.getElementById("petList").addEventListener("click", (event) => {
   const id = button.dataset.petId;
   if (button.dataset.action === "clean") {
     cleanedPets = cleanedPets.includes(id) ? cleanedPets.filter((petId) => petId !== id) : [...cleanedPets, id];
+  } else if (button.dataset.action === "poop") {
+    poopedPets = poopedPets.includes(id) ? poopedPets.filter((petId) => petId !== id) : [...poopedPets, id];
   } else {
     fedPets = fedPets.includes(id) ? fedPets.filter((petId) => petId !== id) : [...fedPets, id];
   }
@@ -139,9 +149,10 @@ document.getElementById("petList").addEventListener("click", (event) => {
 });
 
 document.getElementById("resetToday").addEventListener("click", () => {
-  if (!confirm("今日の『ごはん済み』と『お掃除済み』を全部もどしますか？")) return;
+  if (!confirm("今日の『ごはん済み』『お掃除済み』『フン済み』を全部もどしますか？")) return;
   fedPets = [];
   cleanedPets = [];
+  poopedPets = [];
   saveAll();
   render();
 });
