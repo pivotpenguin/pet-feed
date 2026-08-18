@@ -74,7 +74,7 @@ function render() {
     const isCleaned = cleanedPets.includes(pet.id);
     const hasPooped = poopedPets.includes(pet.id);
     return `<article class="pet ${isFed ? "fed" : ""}" style="--pet-number:${index + 1}">
-      <div class="pet-card-top"><span class="pet-round-button" aria-hidden="true">☰</span><span class="pet-number">PET ${String(index + 1).padStart(2, "0")}</span><span class="pet-round-button" aria-hidden="true">♡</span></div>
+      <div class="pet-card-top"><span class="pet-number">PET ${String(index + 1).padStart(2, "0")}</span></div>
       <span class="pet-icon" aria-label="${pet.name}の写真スペース"><span>${pet.icon}</span><b>PHOTO</b></span>
       <div class="pet-info">
         <p class="pet-name">${pet.name}</p>

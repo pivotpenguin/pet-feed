@@ -51,10 +51,8 @@ h2 { margin-bottom: 0; font-size: 21px; }
 .pet::after { left: -55px; bottom: -86px; width: 165px; height: 165px; }
 .pet.fed { border-color: #a9dd69; background: linear-gradient(145deg, #235b3c 0%, #103426 70%, #071d18 100%); }
 .pet-card-top, .pet-icon, .pet-info, .pet-actions { position: relative; z-index: 1; }
-.pet-card-top { display: grid; grid-template-columns: 36px 1fr 36px; align-items: center; margin-bottom: 13px; text-align: center; }
+.pet-card-top { margin-bottom: 13px; text-align: center; }
 .pet-number { color: #bbd9b9; font-size: 10px; font-weight: 850; letter-spacing: .14em; }
-.pet-round-button { display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid #65927d; border-radius: 11px; color: #d3f7d4; background: #1b533f; font-size: 15px; }
-.pet-card-top .pet-round-button:last-child { justify-self: end; }
 .pet-icon { display: grid; place-items: center; width: 100%; min-height: 245px; margin-bottom: 23px; overflow: hidden; border: 1px solid #6c9b87; border-radius: 20px; background: linear-gradient(145deg, #185847cc, #0b2922cc); }
 .pet-icon::before { position: absolute; width: 195px; height: 195px; border-radius: 50%; background: radial-gradient(circle, #c7fa73aa 0 3%, #68d46b66 4% 22%, transparent 23%); box-shadow: 0 0 45px #86e66e44; content: ""; }
 .pet-icon::after { position: absolute; inset: 16px; border: 1px solid #a6db8a33; border-radius: 14px; content: ""; }
